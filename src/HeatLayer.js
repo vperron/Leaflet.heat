@@ -126,7 +126,6 @@ L.HeatLayer = L.Class.extend({
                 this._map.containerPointToLatLng(size.add([r, r]))),
 
             maxZoom = this.options.maxZoom === undefined ? this._map.getMaxZoom() : this.options.maxZoom,
-            v = 1 / Math.pow(2, Math.max(0, Math.min(maxZoom - this._map.getZoom(), 12))),
             cellSize = r / 2,
             grid = [],
             panePos = this._map._getMapPanePos(),
@@ -141,7 +140,11 @@ L.HeatLayer = L.Class.extend({
                 x = Math.floor((p.x - offsetX) / cellSize) + 2;
                 y = Math.floor((p.y - offsetY) / cellSize) + 2;
 
-                k = (this._latlngs[i].alt || 1) * v;
+                // Remove the zoom-based max intensity and fix the no intensity case
+                k = (this._latlngs[i].alt);
+                if (k === null) {
+                  k = 1;
+                }
 
                 grid[y] = grid[y] || [];
                 cell = grid[y][x];
